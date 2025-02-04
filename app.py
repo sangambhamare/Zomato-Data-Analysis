@@ -17,13 +17,15 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
-
-# Set page config as the very first Streamlit command
+# ---------------------------
+# Set Page Configuration (must be the first Streamlit command)
+# ---------------------------
 st.set_page_config(page_title="Zomato Data Dashboard", layout="wide")
 
-# Now it's safe to add the background video injection:
+# ---------------------------
+# Background Video Injection
+# ---------------------------
 video_url = "https://raw.githubusercontent.com/sangambhamare/Zomato-Data-Analysis/master/Blue%20Neon%20Tech%20Coming%20Soon%20Video.mp4"
-
 st.markdown(
     f"""
     <style>
@@ -53,11 +55,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-# ---------------------------
-# Page Configuration
-# ---------------------------
-st.set_page_config(page_title="Zomato Data Dashboard", layout="wide")
 
 # ---------------------------
 # Helper Functions
@@ -179,7 +176,9 @@ with tabs[0]:
 # ---------------------------
 with tabs[1]:
     st.title("Data Summary")
-    st.markdown("Descriptive Statistics")
+    st.markdown("Dataset Structure (df.info()):")
+    st.text(get_data_info(df))
+    st.markdown("Descriptive Statistics (df.describe()):")
     st.dataframe(df.describe())
 
 # ---------------------------
@@ -401,4 +400,4 @@ with tabs[5]:
         st.text(f"{name}: MSE = {mse:.2f}, R² = {r2:.2f}")
 
 st.markdown("---")
-st.markdown("Built with ❤️ by Sangam S Bhamare 2025")
+st.markdown("Built with ❤️ using Streamlit")
