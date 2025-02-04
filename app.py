@@ -17,6 +17,45 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
+
+
+# Raw URL for the video (ensure it is correct and publicly accessible)
+video_url = "https://raw.githubusercontent.com/sangambhamare/Zomato-Data-Analysis/master/Blue%20Neon%20Tech%20Coming%20Soon%20Video.mp4"
+
+# Inject CSS and HTML for the background video
+st.markdown(
+    f"""
+    <style>
+    /* Make sure the video is behind all other elements */
+    .bg-video {{
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        z-index: -1;
+        object-fit: cover;
+    }}
+    /* Optional: Add an overlay to darken the video for better readability */
+    .video-overlay {{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4); /* Adjust the opacity as needed */
+        z-index: -1;
+    }}
+    </style>
+    <div class="video-overlay"></div>
+    <video autoplay loop muted class="bg-video">
+      <source src="{video_url}" type="video/mp4">
+    </video>
+    """,
+    unsafe_allow_html=True
+)
+
+
 # ---------------------------
 # Page Configuration
 # ---------------------------
