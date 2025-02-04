@@ -4,9 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import io
 
-# ---------------------------
 # Set up the Streamlit page configuration
-# ---------------------------
 st.set_page_config(page_title="Zomato Data Dashboard", layout="wide")
 
 # ---------------------------
@@ -16,7 +14,7 @@ st.set_page_config(page_title="Zomato Data Dashboard", layout="wide")
 def load_data(url):
     df = pd.read_csv(url)
     
-    # Preprocessing: Convert the 'rate' column from a string like "4.1/5" to a float
+    # Convert the 'rate' column from a string like "4.1/5" to a float
     def handleRate(val):
         try:
             return float(str(val).split('/')[0])
@@ -24,12 +22,10 @@ def load_data(url):
             return None
     df['rate'] = df['rate'].apply(handleRate)
     
-    # Convert cost column to numeric if not already
+    # Convert cost column to numeric if not already and rename for convenience
     cost_col = "approx_cost(for two people)"
     if cost_col in df.columns:
         df[cost_col] = pd.to_numeric(df[cost_col], errors='coerce')
-    
-    # Rename columns for ease-of-use
     df.rename(columns={cost_col: 'cost_for_two'}, inplace=True)
     
     return df
@@ -39,23 +35,29 @@ data_url = "https://raw.githubusercontent.com/sangambhamare/Zomato-Data-Analysis
 df = load_data(data_url)
 
 # ---------------------------
-# Sidebar Navigation
+# Horizontal Navigation using Tabs
 # ---------------------------
-st.sidebar.title("Dashboard Navigation")
-view = st.sidebar.radio("Select a view:", 
-                        ("Overview", "Data Summary", "Missing Values", 
-                         "Restaurant Type Distribution", "Detailed Report"))
+tabs = st.tabs([
+    "Overview", 
+    "Data Summary", 
+    "Missing Values", 
+    "Restaurant Type Distribution", 
+    "Detailed Report"
+])
 
 # ---------------------------
-# Dashboard Pages
+# Tab 1: Overview
 # ---------------------------
-if view == "Overview":
-    st.title("Zomato Data Dashboard")
+with tabs[0]:
+    st.title("Zomato Data Dashboard - Overview")
     st.markdown("### Overview of the Data")
     st.dataframe(df.head(10), height=400)
     st.markdown("This dashboard provides insights into the Zomato dataset.")
 
-elif view == "Data Summary":
+# ---------------------------
+# Tab 2: Data Summary
+# ---------------------------
+with tabs[1]:
     st.title("Data Summary")
     st.markdown("Below is a standard formatted summary of the dataset:")
 
@@ -64,15 +66,24 @@ elif view == "Data Summary":
     df.info(buf=buffer)
     info_str = buffer.getvalue()
 
-    st.subheader("Descriptive Statistics")
+    st.subheader("Dataset Structure (df.info()):")
+    st.text(info_str)
+
+    st.subheader("Descriptive Statistics (df.describe()):")
     st.dataframe(df.describe())
 
-elif view == "Missing Values":
+# ---------------------------
+# Tab 3: Missing Values
+# ---------------------------
+with tabs[2]:
     st.title("Missing Values")
     st.markdown("Count of NULL values in each column:")
     st.write(df.isnull().sum())
 
-elif view == "Restaurant Type Distribution":
+# ---------------------------
+# Tab 4: Restaurant Type Distribution
+# ---------------------------
+with tabs[3]:
     st.title("Restaurant Type Distribution")
     st.markdown("Count plot for the `listed_in(type)` column:")
     
@@ -84,7 +95,10 @@ elif view == "Restaurant Type Distribution":
     plt.xticks(rotation=45)
     st.pyplot(fig)
 
-elif view == "Detailed Report":
+# ---------------------------
+# Tab 5: Detailed Report & Insights
+# ---------------------------
+with tabs[4]:
     st.title("Detailed Report & Insights")
     st.markdown("""
     This section provides further insights into the Zomato dataset through detailed analysis and various visualizations.
@@ -162,14 +176,13 @@ elif view == "Detailed Report":
         else:
             st.write("Column 'book_table' is missing.")
     
-    # --- Additional Insights ---
     st.subheader("Additional Insights")
     st.markdown("""
-    - **Correlation Insights:** The heatmap above helps identify how strongly various numerical features are related. A high correlation between cost and rating, for example, may suggest that more expensive restaurants tend to have higher ratings.
+    - **Correlation Insights:** The heatmap above helps identify how strongly various numerical features are related.
     - **Cost Analysis:** The scatter plot shows if higher cost for two is associated with higher or lower ratings.
     - **Popularity Analysis:** The relationship between votes and rating can indicate if more popular restaurants (with more votes) are rated differently.
     - **Service Options:** The bar charts provide insights into how online ordering and table booking may impact average ratings.
     """)
-    
-st.sidebar.markdown("---")
-st.sidebar.markdown("Built with ❤️ by Sangam Sanjay Bhamare 2025")
+
+st.markdown("---")
+st.markdown("Built with ❤️ using Streamlit")
