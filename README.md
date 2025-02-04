@@ -2,6 +2,11 @@
 
 This repository contains a single-file Streamlit dashboard for analyzing Zomato restaurant data. The dashboard loads the dataset directly from GitHub and provides multiple interactive views to explore and gain insights from the data.
 
+## Live Demo
+
+Check out the live demo of the dashboard here:  
+[Zomato Data Dashboard](https://zomato-data-analysis-fndmnfcng9x3jhycdethno.streamlit.app/)
+
 ## Features
 
 - **Overview:**  
