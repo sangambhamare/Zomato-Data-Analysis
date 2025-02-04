@@ -13,7 +13,7 @@ def load_data(url):
     return data
 
 # URL for your CSV file on GitHub (use the raw link)
-data_url = "https://raw.githubusercontent.com/your_username/your_repo/main/zomato_data.csv"
+data_url = "Zomato-data-.csv"
 
 # Load the data
 data = load_data(data_url)
