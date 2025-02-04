@@ -4,7 +4,25 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import io
 
+# Additional ML libraries
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Classification models
+from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.svm import SVC, SVR
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+
+# ---------------------------
 # Set up the Streamlit page configuration
+# ---------------------------
 st.set_page_config(page_title="Zomato Data Dashboard", layout="wide")
 
 # ---------------------------
@@ -42,7 +60,8 @@ tabs = st.tabs([
     "Data Summary", 
     "Missing Values", 
     "Restaurant Type Distribution", 
-    "Detailed Report"
+    "Detailed Report",
+    "ML Implementation"
 ])
 
 # ---------------------------
@@ -181,5 +200,116 @@ with tabs[4]:
     - **Service Options:** The bar charts provide insights into how online ordering and table booking may impact average ratings.
     """)
 
+# ---------------------------
+# Tab 6: ML Implementation
+# ---------------------------
+with tabs[5]:
+    st.title("ML Implementation")
+    st.markdown("This section demonstrates several machine learning algorithms applied to the Zomato dataset.")
+    
+    # --- Data Preparation for ML ---
+    st.markdown("### Data Preparation for ML Tasks")
+    # Create a copy for ML experiments
+    df_ml = df.copy()
+    
+    # Convert 'online_order' and 'book_table' to numeric (1 for Yes, 0 for No)
+    df_ml['online_order'] = df_ml['online_order'].apply(lambda x: 1 if str(x).lower()=='yes' else 0)
+    df_ml['book_table'] = df_ml['book_table'].apply(lambda x: 1 if str(x).lower()=='yes' else 0)
+    
+    # Create a binary classification target: HighRating (1 if rate >= 4.0, else 0)
+    df_ml['HighRating'] = df_ml['rate'].apply(lambda x: 1 if x >= 4.0 else 0)
+    
+    # Select features for ML (classification & regression)
+    features = ['cost_for_two', 'votes', 'online_order', 'book_table']
+    X = df_ml[features].fillna(0)
+    y_class = df_ml['HighRating']
+    y_reg = df_ml['rate']
+    
+    # Scale features
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    
+    st.markdown("Features used for ML experiments: **Cost for Two**, **Votes**, **Online Order**, **Table Booking**")
+    
+    # --- Classification ---
+    st.markdown("### Classification: Predicting High-Rated Restaurants")
+    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_class, test_size=0.3, random_state=42)
+    
+    models_classification = {
+        "Logistic Regression": LogisticRegression(),
+        "Decision Tree": DecisionTreeClassifier(),
+        "SVM": SVC(probability=True),
+        "Naive Bayes": GaussianNB(),
+        "KNN": KNeighborsClassifier(),
+        "Random Forest": RandomForestClassifier()
+    }
+    
+    results = {}
+    for name, model in models_classification.items():
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        acc = accuracy_score(y_test, y_pred)
+        results[name] = acc
+    
+    # Plot classification accuracies
+    fig_acc, ax_acc = plt.subplots()
+    sns.barplot(x=list(results.keys()), y=list(results.values()), ax=ax_acc)
+    ax_acc.set_title("Classification Accuracy")
+    ax_acc.set_ylabel("Accuracy")
+    ax_acc.set_ylim(0,1)
+    plt.xticks(rotation=45)
+    st.pyplot(fig_acc)
+    
+    # Display confusion matrix for the best model (highest accuracy)
+    best_model_name = max(results, key=results.get)
+    best_model = models_classification[best_model_name]
+    y_pred_best = best_model.predict(X_test)
+    cm = confusion_matrix(y_test, y_pred_best)
+    fig_cm, ax_cm = plt.subplots(figsize=(6,4))
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", ax=ax_cm)
+    ax_cm.set_title(f"Confusion Matrix: {best_model_name}")
+    ax_cm.set_xlabel("Predicted")
+    ax_cm.set_ylabel("True")
+    st.pyplot(fig_cm)
+    
+    st.markdown("### Clustering & Dimensionality Reduction")
+    # --- KMeans Clustering with PCA ---
+    kmeans = KMeans(n_clusters=2, random_state=42)
+    clusters = kmeans.fit_predict(X_scaled)
+    
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(X_scaled)
+    
+    fig_pca, ax_pca = plt.subplots(figsize=(8,6))
+    scatter = ax_pca.scatter(X_pca[:,0], X_pca[:,1], c=clusters, cmap="viridis", alpha=0.7)
+    ax_pca.set_title("PCA Projection with KMeans Clusters")
+    ax_pca.set_xlabel("Principal Component 1")
+    ax_pca.set_ylabel("Principal Component 2")
+    st.pyplot(fig_pca)
+    
+    st.markdown("### Regression: Predicting Continuous Rating")
+    # --- Regression ---
+    X_train_reg, X_test_reg, y_train_reg, y_test_reg = train_test_split(X_scaled, y_reg, test_size=0.3, random_state=42)
+    
+    models_regression = {
+        "Linear Regression": LinearRegression(),
+        "Decision Tree Regressor": DecisionTreeRegressor(),
+        "SVM Regressor": SVR(),
+        "KNN Regressor": KNeighborsRegressor(),
+        "Random Forest Regressor": RandomForestRegressor()
+    }
+    
+    reg_results = {}
+    for name, model in models_regression.items():
+        model.fit(X_train_reg, y_train_reg)
+        y_pred_reg = model.predict(X_test_reg)
+        mse = mean_squared_error(y_test_reg, y_pred_reg)
+        r2 = r2_score(y_test_reg, y_pred_reg)
+        reg_results[name] = (mse, r2)
+    
+    st.markdown("**Regression Results (Mean Squared Error and R² Score):**")
+    for name, (mse, r2) in reg_results.items():
+        st.text(f"{name}: MSE = {mse:.2f}, R² = {r2:.2f}")
+
 st.markdown("---")
-st.markdown("Built with ❤️ by Sangam S Bhamare 2025")
+st.markdown("Built with ❤️ using Streamlit")
