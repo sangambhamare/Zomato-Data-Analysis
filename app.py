@@ -23,35 +23,30 @@ from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 st.set_page_config(page_title="Zomato Data Dashboard", layout="wide")
 
 # ---------------------------
-# Background Video Injection
+# Background Template Injection (Gradient & Image Overlay)
 # ---------------------------
-video_url = "https://raw.githubusercontent.com/sangambhamare/Zomato-Data-Analysis/master/Blue%20Neon%20Tech%20Coming%20Soon%20Video.mp4"
 st.markdown(
-    f"""
+    """
     <style>
-    .bg-video {{
-        position: fixed;
-        top: 0;
-        left: 0;
-        min-width: 100%;
-        min-height: 100%;
-        z-index: -1;
-        object-fit: cover;
-    }}
-    .video-overlay {{
+    /* Gradient background for the app */
+    .stApp {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-size: cover;
+    }
+    /* Image overlay for added texture */
+    .stApp::before {
+        content: "";
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.4);
+        background-image: url("https://images.unsplash.com/photo-1547721064-da6cfb341d50?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80");
+        background-size: cover;
+        opacity: 0.2;
         z-index: -1;
-    }}
+    }
     </style>
-    <div class="video-overlay"></div>
-    <video autoplay loop muted class="bg-video">
-      <source src="{video_url}" type="video/mp4">
-    </video>
     """,
     unsafe_allow_html=True
 )
@@ -67,7 +62,7 @@ def load_data(url: str) -> pd.DataFrame:
         st.error("Error loading data: " + str(e))
         return pd.DataFrame()
 
-    # Preprocess the rate column
+    # Preprocess the 'rate' column (convert strings like "4.1/5" to float 4.1)
     def handle_rate(val):
         try:
             return float(str(val).split('/')[0])
@@ -75,7 +70,7 @@ def load_data(url: str) -> pd.DataFrame:
             return None
     df['rate'] = df['rate'].apply(handle_rate)
 
-    # Convert cost column to numeric and rename
+    # Convert the cost column to numeric and rename it to 'cost_for_two'
     cost_col = "approx_cost(for two people)"
     if cost_col in df.columns:
         df[cost_col] = pd.to_numeric(df[cost_col], errors='coerce')
@@ -96,7 +91,7 @@ def plot_countplot(column, title, xlabel, rotation=45):
     return fig
 
 def run_classification(X, y):
-    # Split data
+    # Split the data for training and testing
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
     models = {
@@ -138,7 +133,7 @@ def run_clustering(X, n_clusters=2):
     pca = PCA(n_components=2)
     X_pca = pca.fit_transform(X)
     fig, ax = plt.subplots(figsize=(8, 6))
-    scatter = ax.scatter(X_pca[:, 0], X_pca[:, 1], c=clusters, cmap="viridis", alpha=0.7)
+    ax.scatter(X_pca[:, 0], X_pca[:, 1], c=clusters, cmap="viridis", alpha=0.7)
     ax.set_title("PCA Projection with KMeans Clusters")
     ax.set_xlabel("Principal Component 1")
     ax.set_ylabel("Principal Component 2")
