@@ -18,7 +18,7 @@ from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
 
-
+st.set_page_config(page_title="Zomato Data Dashboard", layout="wide")
 # Raw URL for the video (ensure it is correct and publicly accessible)
 video_url = "https://raw.githubusercontent.com/sangambhamare/Zomato-Data-Analysis/master/Blue%20Neon%20Tech%20Coming%20Soon%20Video.mp4"
 
