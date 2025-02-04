@@ -15,7 +15,7 @@ def load_data(url):
     return data
 
 # URL for the dataset on GitHub (adjust with your username/repo details)
-data_url = "https://raw.githubusercontent.com/your_username/your_repo/main/Zomato-data-.csv"
+data_url = "https://github.com/sangambhamare/Zomato-Data-Analysis/blob/master/Zomato-data-.csv"
 
 # Load the dataset
 data = load_data(data_url)
