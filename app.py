@@ -1,105 +1,128 @@
-# Step 1: Import necessary Python libraries.
+import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import io
 
-# Optional: Configure matplotlib for inline plots (useful if running in a notebook)
-# %matplotlib inline
+# -------------------------
+# Step 1: Import necessary Python libraries.
+# -------------------------
+st.title("Zomato Data Dashboard")
+st.subheader("Step 1: Import necessary Python libraries")
+st.code(
+    '''
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+    ''',
+    language='python'
+)
 
-# ----------------------------------------------------------------
-
+# -------------------------
 # Step 2: Create the data frame.
-# (You can find the dataset link at the end of the article.)
-dataframe = pd.read_csv("Zomato-data-.csv")
-print("DataFrame Head (Before processing):")
+# -------------------------
+st.subheader("Step 2: Create the data frame")
+
+# Use the raw GitHub URL for the CSV file.
+data_url = "https://raw.githubusercontent.com/sangambhamare/Zomato-Data-Analysis/master/Zomato-data-.csv"
+dataframe = pd.read_csv(data_url)
+
+st.write("First few rows of the DataFrame:")
+st.dataframe(dataframe.head())
+
+st.code(
+    '''
+dataframe = pd.read_csv("https://raw.githubusercontent.com/sangambhamare/Zomato-Data-Analysis/master/Zomato-data-.csv")
 print(dataframe.head())
+    ''',
+    language='python'
+)
 
-# Expected Output:
-#                     name online_order book_table   rate  votes  \
-# 0                  Jalsa          Yes        Yes  4.1/5    775   
-# 1         Spice Elephant          Yes         No  4.1/5    787   
-# 2        San Churro Cafe          Yes         No  3.8/5    918   
-# 3  Addhuri Udupi Bhojana           No         No  3.7/5     88   
-# 4          Grand Village           No         No  3.8/5    166   
-#
-#    approx_cost(for two people) listed_in(type)
-# 0                          800          Buffet
-# 1                          800          Buffet
-# 2                          800          Buffet
-# 3                          300          Buffet
-# 4                          600          Buffet
-
-# ----------------------------------------------------------------
-
+# -------------------------
 # Step 3: Convert the data type of the "rate" column to float and remove the denominator.
+# -------------------------
+st.subheader("Step 3: Convert the 'rate' column to float and remove the denominator")
+st.write("Before conversion:")
+st.dataframe(dataframe[['rate']].head())
+
+st.code(
+    '''
 def handleRate(value):
-    value = str(value).split('/')  # Split the string by '/'
-    value = value[0]                # Take the first part (before the '/')
+    value = str(value).split('/')
+    value = value[0]
     return float(value)
 
 dataframe['rate'] = dataframe['rate'].apply(handleRate)
-print("\nDataFrame Head (After processing 'rate'):")
 print(dataframe.head())
+    ''',
+    language='python'
+)
 
-# Expected Output:
-#                     name online_order book_table  rate  votes  \
-# 0                  Jalsa          Yes        Yes   4.1    775   
-# 1         Spice Elephant          Yes         No   4.1    787   
-# 2        San Churro Cafe          Yes         No   3.8    918   
-# 3  Addhuri Udupi Bhojana           No         No   3.7     88   
-# 4          Grand Village           No         No   3.8    166   
-#
-#    approx_cost(for two people) listed_in(type)
-# 0                          800          Buffet
-# 1                          800          Buffet
-# 2                          800          Buffet
-# 3                          300          Buffet
-# 4                          600          Buffet
+def handleRate(value):
+    value = str(value).split('/')
+    value = value[0]
+    return float(value)
 
-# ----------------------------------------------------------------
+dataframe['rate'] = dataframe['rate'].apply(handleRate)
 
+st.write("After conversion:")
+st.dataframe(dataframe[['rate']].head())
+
+# -------------------------
 # Step 4: Obtain a summary of the data frame.
-print("\nDataFrame Info:")
+# -------------------------
+st.subheader("Step 4: DataFrame Summary using dataframe.info()")
+st.write("The summary of the DataFrame:")
+
+# Capture the output of dataframe.info() using a buffer
+buffer = io.StringIO()
+dataframe.info(buf=buffer)
+info_str = buffer.getvalue()
+st.text(info_str)
+
+st.code(
+    '''
 dataframe.info()
+    ''',
+    language='python'
+)
 
-# Expected Output:
-# <class 'pandas.core.frame.DataFrame'>
-# RangeIndex: 148 entries, 0 to 147
-# Data columns (total 7 columns):
-#  #   Column                       Non-Null Count  Dtype  
-# ---  ------                       --------------  -----  
-#  0   name                         148 non-null    object 
-#  1   online_order                 148 non-null    object 
-#  2   book_table                   148 non-null    object 
-#  3   rate                         148 non-null    float64
-#  4   votes                        148 non-null    int64  
-#  5   approx_cost(for two people)  148 non-null    int64  
-#  6   listed_in(type)              148 non-null    object 
-# dtypes: float64(1), int64(2), object(4)
-# memory usage: 8.2+ KB
+# -------------------------
+# Step 5: Check for NULL values.
+# -------------------------
+st.subheader("Step 5: Check for NULL values")
+st.write("Count of NULL values in each column:")
+null_counts = dataframe.isnull().sum()
+st.write(null_counts)
 
-# ----------------------------------------------------------------
-
-# Step 5: Check for NULL values in the data frame.
-print("\nMissing values in each column:")
+st.code(
+    '''
 print(dataframe.isnull().sum())
+    ''',
+    language='python'
+)
 
-# Expected Output (if there are no NULL values):
-# name                         0
-# online_order                 0
-# book_table                   0
-# rate                         0
-# votes                        0
-# approx_cost(for two people)  0
-# listed_in(type)              0
-# dtype: int64
-
-# ----------------------------------------------------------------
-
+# -------------------------
 # Step 6: Explore the 'listed_in(type)' column.
-# This plot shows the count of restaurants by their type.
+# -------------------------
+st.subheader("Step 6: Explore the 'listed_in(type)' column")
+st.write("Count plot for the 'listed_in(type)' column:")
+
+st.code(
+    '''
 sns.countplot(x=dataframe['listed_in(type)'])
 plt.xlabel("Type of restaurant")
-plt.title("Count of Restaurants by Type")
 plt.show()
+    ''',
+    language='python'
+)
+
+fig, ax = plt.subplots(figsize=(8, 5))
+sns.countplot(x=dataframe['listed_in(type)'], ax=ax)
+ax.set_xlabel("Type of Restaurant")
+ax.set_ylabel("Count")
+ax.set_title("Distribution of Restaurant Types")
+plt.xticks(rotation=45)
+st.pyplot(fig)
