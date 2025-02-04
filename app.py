@@ -66,10 +66,7 @@ with tabs[1]:
     df.info(buf=buffer)
     info_str = buffer.getvalue()
 
-    st.subheader("Dataset Structure (df.info()):")
-    st.text(info_str)
-
-    st.subheader("Descriptive Statistics (df.describe()):")
+    st.subheader("Descriptive Statistics")
     st.dataframe(df.describe())
 
 # ---------------------------
@@ -185,4 +182,4 @@ with tabs[4]:
     """)
 
 st.markdown("---")
-st.markdown("Built with ❤️ using Streamlit")
+st.markdown("Built with ❤️ by Sangam S Bhamare 2025")
