@@ -18,7 +18,10 @@ from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
 
-# Add this code block right after your import statements and st.set_page_config
+# Set page config as the very first Streamlit command
+st.set_page_config(page_title="Zomato Data Dashboard", layout="wide")
+
+# Now it's safe to add the background video injection:
 video_url = "https://raw.githubusercontent.com/sangambhamare/Zomato-Data-Analysis/master/Blue%20Neon%20Tech%20Coming%20Soon%20Video.mp4"
 
 st.markdown(
@@ -50,8 +53,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-
 
 # ---------------------------
 # Page Configuration
