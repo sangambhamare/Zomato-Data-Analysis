@@ -41,7 +41,7 @@ st.markdown(
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: url("https://images.unsplash.com/photo-1547721064-da6cfb341d50?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80");
+        background-image: url("https://www.freepik.com/premium-ai-image/neon-blue-color-geometric-circle-dark-background_170119793.htm");
         background-size: cover;
         opacity: 0.2;
         z-index: -1;
