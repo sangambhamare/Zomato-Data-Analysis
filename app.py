@@ -52,10 +52,7 @@ elif view == "Data Summary":
     df.info(buf=buffer)
     info_str = buffer.getvalue()
 
-    st.subheader("Dataset Structure (df.info()):")
-    st.text(info_str)
-
-    st.subheader("Descriptive Statistics (df.describe()):")
+    st.subheader("Descriptive Statistics")
     st.dataframe(df.describe())
 
 elif view == "Missing Values":
