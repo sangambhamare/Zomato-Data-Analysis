@@ -17,45 +17,6 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
-
-st.set_page_config(page_title="Zomato Data Dashboard", layout="wide")
-# Raw URL for the video (ensure it is correct and publicly accessible)
-video_url = "https://raw.githubusercontent.com/sangambhamare/Zomato-Data-Analysis/master/Blue%20Neon%20Tech%20Coming%20Soon%20Video.mp4"
-
-# Inject CSS and HTML for the background video
-st.markdown(
-    f"""
-    <style>
-    /* Make sure the video is behind all other elements */
-    .bg-video {{
-        position: fixed;
-        right: 0;
-        bottom: 0;
-        min-width: 100%;
-        min-height: 100%;
-        z-index: -1;
-        object-fit: cover;
-    }}
-    /* Optional: Add an overlay to darken the video for better readability */
-    .video-overlay {{
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.4); /* Adjust the opacity as needed */
-        z-index: -1;
-    }}
-    </style>
-    <div class="video-overlay"></div>
-    <video autoplay loop muted class="bg-video">
-      <source src="{video_url}" type="video/mp4">
-    </video>
-    """,
-    unsafe_allow_html=True
-)
-
-
 # ---------------------------
 # Page Configuration
 # ---------------------------
@@ -198,8 +159,6 @@ with tabs[2]:
 with tabs[3]:
     st.title("Restaurant Type Distribution")
     st.markdown("Count plot for the `listed_in(type)` column:")
-    
-    # Original countplot for restaurant types
     if 'listed_in(type)' in df.columns:
         fig = plot_countplot(df['listed_in(type)'], "Distribution of Restaurant Types", "Type of Restaurant")
         st.pyplot(fig)
@@ -271,7 +230,7 @@ with tabs[4]:
     - Scatter plots for Cost vs. Rating and Votes vs. Rating.
     - Analysis of Online Order & Table Booking impact on ratings.
     """)
-
+    
     # Correlation Heatmap
     st.subheader("Correlation Heatmap")
     numeric_cols = df.select_dtypes(include=['float64', 'int64']).columns
@@ -405,6 +364,4 @@ with tabs[5]:
         st.text(f"{name}: MSE = {mse:.2f}, R² = {r2:.2f}")
 
 st.markdown("---")
-st.markdown("Built with ❤️ by Sangam S Bhamare")
-
-
+st.markdown("Built with ❤️ by Sangam S Bhamare 2025")
