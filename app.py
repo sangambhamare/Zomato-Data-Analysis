@@ -159,11 +159,65 @@ with tabs[2]:
 with tabs[3]:
     st.title("Restaurant Type Distribution")
     st.markdown("Count plot for the `listed_in(type)` column:")
+    
+    # Original countplot for restaurant types
     if 'listed_in(type)' in df.columns:
         fig = plot_countplot(df['listed_in(type)'], "Distribution of Restaurant Types", "Type of Restaurant")
         st.pyplot(fig)
     else:
         st.error("Column 'listed_in(type)' is missing.")
+    
+    st.markdown("### Additional Analysis:")
+    
+    # 1. Line plot: Sum of votes per restaurant type
+    grouped_data = df.groupby('listed_in(type)')['votes'].sum()
+    result = pd.DataFrame({'votes': grouped_data})
+    fig_votes_line, ax_votes_line = plt.subplots()
+    ax_votes_line.plot(result, c='green', marker='o')
+    ax_votes_line.set_xlabel('Type of restaurant', color='red', size=20)
+    ax_votes_line.set_ylabel('Votes', color='red', size=20)
+    st.pyplot(fig_votes_line)
+    
+    # 2. Display the restaurant(s) with the maximum votes
+    max_votes = df['votes'].max()
+    restaurant_with_max_votes = df.loc[df['votes'] == max_votes, 'name']
+    st.markdown("#### Restaurant(s) with the maximum votes:")
+    st.write(restaurant_with_max_votes)
+    
+    # 3. Countplot for online_order
+    st.markdown("#### Online Order Count")
+    fig_online_order, ax_online_order = plt.subplots()
+    sns.countplot(x=df['online_order'], ax=ax_online_order)
+    st.pyplot(fig_online_order)
+    
+    # 4. Histogram for ratings distribution
+    st.markdown("#### Ratings Distribution")
+    fig_hist, ax_hist = plt.subplots()
+    ax_hist.hist(df['rate'], bins=5)
+    ax_hist.set_title('Ratings Distribution')
+    st.pyplot(fig_hist)
+    
+    # 5. Countplot for cost for two
+    st.markdown("#### Cost for Two Distribution")
+    fig_couple, ax_couple = plt.subplots()
+    sns.countplot(x=df['cost_for_two'], ax=ax_couple)
+    st.pyplot(fig_couple)
+    
+    # 6. Boxplot: Online Order vs. Rating
+    st.markdown("#### Boxplot: Online Order vs. Rating")
+    fig_box, ax_box = plt.subplots(figsize=(6,6))
+    sns.boxplot(x='online_order', y='rate', data=df, ax=ax_box)
+    st.pyplot(fig_box)
+    
+    # 7. Heatmap: Pivot table of restaurant type vs. online order
+    st.markdown("#### Heatmap: Restaurant Type vs. Online Order")
+    pivot_table = df.pivot_table(index='listed_in(type)', columns='online_order', aggfunc='size', fill_value=0)
+    fig_heat, ax_heat = plt.subplots()
+    sns.heatmap(pivot_table, annot=True, cmap='YlGnBu', fmt='d', ax=ax_heat)
+    ax_heat.set_title('Heatmap')
+    ax_heat.set_xlabel('Online Order')
+    ax_heat.set_ylabel('Listed In (Type)')
+    st.pyplot(fig_heat)
 
 # ---------------------------
 # Tab 5: Detailed Report & Insights
