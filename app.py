@@ -172,4 +172,4 @@ elif view == "Detailed Report":
     """)
     
 st.sidebar.markdown("---")
-st.sidebar.markdown("Built with ❤️ using Streamlit by Sangam Sanjay Bhamare 2025")
+st.sidebar.markdown("Built with ❤️ by Sangam Sanjay Bhamare 2025")
