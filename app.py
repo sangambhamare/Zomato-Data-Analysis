@@ -64,10 +64,7 @@ elif view == "Data Summary":
     df.info(buf=buffer)
     info_str = buffer.getvalue()
 
-    st.subheader("Dataset Structure (df.info()):")
-    st.text(info_str)
-
-    st.subheader("Descriptive Statistics (df.describe()):")
+    st.subheader("Descriptive Statistics")
     st.dataframe(df.describe())
 
 elif view == "Missing Values":
@@ -175,4 +172,4 @@ elif view == "Detailed Report":
     """)
     
 st.sidebar.markdown("---")
-st.sidebar.markdown("Built with ❤️ using Streamlit")
+st.sidebar.markdown("Built with ❤️ using Streamlit by Sangam Sanjay Bhamare 2025")
